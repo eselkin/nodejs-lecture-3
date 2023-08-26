@@ -1,0 +1,31 @@
+{
+  "name": "lecture-week3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon --watch 'src/**/*{.ts}' --watch '.env' --exec 'ts-node' src/index.ts",
+    "start": "node build/index.js",
+    "seed": "node build/db/seed.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.4.5",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^8.0.0",
+    "typescript": "^5.2.2",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.6",
+    "@types/passport": "^1.0.12",
+    "@types/passport-local-mongoose": "^6.1.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
+  }
+}
