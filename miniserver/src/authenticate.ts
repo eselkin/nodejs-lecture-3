@@ -96,7 +96,8 @@ export const verifyAdmin = async (
   next: NextFunction
 ) => {
   if (!req.user) {
-    return res.status(403).json({ message: "You are not authorized" });
+    const error = new Error("You are not authorized");
+    return next(error);
   }
   // @ts-ignore-next-line
   if (req.user.roles.some((role: RoleType) => role.name === "admin")) {
