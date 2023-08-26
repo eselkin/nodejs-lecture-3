@@ -34,9 +34,7 @@ passport.use(
       UserModel.findOne({ where: { email: email } })
         .then((user) => {
           if (!user) {
-            return done(401, false, {
-              message: "Incorrect Email or Password or Both",
-            });
+            return done(new Error("User or Email is incorrect"), false);
           }
           argon2
             .verify(user.hash, password)

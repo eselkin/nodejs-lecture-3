@@ -11,8 +11,9 @@ const seed = async () => {
     roleUser = await RoleModel.create({ name: "user", level: 0 });
   }
   if (!roleAdmin) {
-    roleAdmin = await RoleModel.create({ name: "admin", level: 1 });
+    roleAdmin = await RoleModel.create({ name: "admin", level: 10 });
   }
+
   console.info("Seeding complete");
 
   process.exit(0); // everything is OK
