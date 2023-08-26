@@ -1,4 +1,4 @@
-import { Types, Schema, model, connect } from "mongoose";
+import { Types, Schema, model, connect, Document } from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -6,24 +6,24 @@ const makeConnection = async () => {
   await connect(process.env.MONGO_URL || "", {});
 };
 
-export const UserSchema = new Schema({
+const UserSchema = new Schema({
   email: String,
   password: String,
   roles: { type: Schema.Types.ObjectId, ref: "Role" },
 });
 
-export type UserType = {
+export type UserType = Document & {
   email: string;
   password: string;
   roles: string[];
 };
 
-export const RoleSchema = new Schema({
+const RoleSchema = new Schema({
   name: String,
   level: Number,
 });
 
-export type RoleType = {
+export type RoleType = Document & {
   name: string;
   level: number;
 };
