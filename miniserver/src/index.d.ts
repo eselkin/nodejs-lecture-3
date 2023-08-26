@@ -1,11 +1,8 @@
-import { UserType } from "./db";
-
-// export {}; <-- you don't need this
-
+import { RoleType, UserType } from "./db";
 declare global {
   namespace Express {
     export interface Request {
-      user?: UserType;
+      user?: Omit<UserType, "roles"> & { roles: RoleType[] };
     }
   }
 }

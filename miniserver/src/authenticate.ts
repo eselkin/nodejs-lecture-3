@@ -3,7 +3,9 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
-import { UserModel, UserType } from "~/db";
+import { RoleType, UserModel, UserType } from "~/db";
+import { Types } from "mongoose";
+import { NextFunction, Request, Response } from "express";
 
 const { TOKEN_SECRET_KEY } = process.env;
 
@@ -22,6 +24,7 @@ export const local = passport.use(
   new LocalStrategy(
     (email: string, password: string, done: LocalStrategyDoneCallback) => {
       UserModel.findOne({ where: { email: email } })
+        .populate<{ roles: RoleType }>("roles")
         .then((user) => {
           if (!user) {
             return done(401, false, {
@@ -59,7 +62,7 @@ passport.deserializeUser(function (user: UserType, cb) {
   });
 });
 
-export const getToken = (user: UserType) => {
+export const getToken = (user: { id: string }) => {
   return jwt.sign(user, TOKEN_SECRET_KEY, { expiresIn: 3600 });
 };
 
@@ -72,11 +75,12 @@ export const jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     console.log("JWT payload:", jwt_payload);
     // @ts-ignore-next-line
-    UserModel.findOne({ _id: jwt_payload._id }, (err, user) => {
+    UserModel.findById(jwt_payload.id, async (err, user: UserType) => {
       if (err) {
         return done(err, false);
       } else if (user) {
-        return done(null, user);
+        const populatedUser = await user.populate<{ roles: RoleType }>("roles");
+        return done(null, populatedUser);
       } else {
         return done(null, false);
       }
@@ -85,3 +89,17 @@ export const jwtPassport = passport.use(
 );
 
 export const verifyUser = passport.authenticate("jwt", { session: false });
+//xRoute (doesn't have req.user) -> verifyUser() -> yRoute (does have req.user)
+export const verifyAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) {
+    return res.status(403).json({ message: "You are not authorized" });
+  }
+  // @ts-ignore-next-line
+  if (req.user.roles.some((role: RoleType) => role.name === "admin")) {
+    return next();
+  }
+};

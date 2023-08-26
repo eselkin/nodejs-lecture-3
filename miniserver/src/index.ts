@@ -2,7 +2,17 @@ import express from "express";
 import dotenv from "dotenv";
 
 import winston from "winston";
+import { RoleType, UserType } from "./db";
+import loginRouter from "./routes/login";
+import authenticatedRouter from "./routes/authenticatedroute";
 
+declare global {
+  namespace Express {
+    export interface Request {
+      user?: Omit<UserType, "roles"> & { roles: RoleType[] };
+    }
+  }
+}
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.json(),
@@ -34,9 +44,8 @@ if (PORT && isNaN(parseInt(PORT))) {
 }
 const port = parseInt(PORT || "3000");
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.use("/login", loginRouter);
+app.use("/authenticatedroute", authenticatedRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
