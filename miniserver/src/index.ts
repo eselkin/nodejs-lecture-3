@@ -1,13 +1,27 @@
 import express from "express";
 import dotenv from "dotenv";
-import passport from "passport";
-import {
-  IVerifyOptions,
-  Strategy as LocalStrategy,
-  VerifyFunction,
-} from "passport-local";
-import argon2 from "argon2";
-import { UserModel } from "~/db";
+
+import winston from "winston";
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  defaultMeta: { service: "user-service" },
+  transports: [
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" }),
+  ],
+});
+
+if (process.env.NODE_ENV !== "production") {
+  // if we're in development output to the console
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
+}
+
 dotenv.config();
 
 const app = express();
@@ -19,46 +33,6 @@ if (PORT && isNaN(parseInt(PORT))) {
   throw new Error("PORT must be an integer");
 }
 const port = parseInt(PORT || "3000");
-
-// This is a type signature that comes from passport-local ... only error is required user and options are optional
-export type LocalStrategyDoneCallback = (
-  error: any,
-  user?: any,
-  options?: IVerifyOptions
-) => void;
-
-// use static authenticate method of model in LocalStrategy
-passport.use(
-  new LocalStrategy(
-    (email: string, password: string, done: LocalStrategyDoneCallback) => {
-      UserModel.findOne({ where: { email: email } })
-        .then((user) => {
-          if (!user) {
-            return done(401, false, {
-              message: "Incorrect Email or Password or Both",
-            });
-          }
-          argon2
-            .verify(user.hash, password)
-            .then((valid) => {
-              return done(null, valid ? user : false, {
-                message: "Incorrect Email or Password or Both",
-              });
-            })
-            .catch((err) => {
-              return done(err);
-            });
-        })
-        .catch((err) => {
-          return done(err);
-        });
-    }
-  )
-);
-
-// We don't use these, we AUTHENTICATE! each route request!!!! These are for using cookie sessions
-// passport.serializeUser();
-// passport.deserializeUser();
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

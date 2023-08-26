@@ -1,4 +1,4 @@
-import { Types, Schema, model, connect } from "mongoose";
+import { Types, Schema, model, connect, Document } from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -12,7 +12,7 @@ export const UserSchema = new Schema({
   roles: { type: Schema.Types.ObjectId, ref: "Role" },
 });
 
-export type UserType = {
+export type UserType = Document & {
   email: string;
   hash: string; // salt will be in hash
   roles: Types.ObjectId[]; // string array really
@@ -23,7 +23,7 @@ export const RoleSchema = new Schema({
   level: Number,
 });
 
-export type RoleType = {
+export type RoleType = Document & {
   name: string;
   level: number;
 };
