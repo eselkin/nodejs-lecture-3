@@ -13,6 +13,15 @@ const seed = async () => {
   if (!roleAdmin) {
     roleAdmin = await RoleModel.create({ name: "admin", level: 1 });
   }
+  let adminUserEli = await UserModel.findOne({
+    where: { email: "eli@eliselkin.com" },
+  });
+  if (!adminUserEli) {
+    adminUserEli = await UserModel.create({
+      email: "eli@eliselkin.com",
+      roles: [roleAdmin._id],
+    });
+  }
   console.info("Seeding complete");
 
   process.exit(0); // everything is OK

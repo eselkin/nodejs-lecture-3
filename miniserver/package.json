@@ -7,7 +7,8 @@
     "build": "tsc",
     "dev": "nodemon --watch 'src/**/*{.ts}' --watch '.env' --exec 'ts-node -r tsconfig-paths/register'  src/index.ts",
     "start": "NODE_ENV=production node build/index.js ",
-    "seed": "node build/db/seed.js"
+    "seed:js": "node build/db/seed.js",
+    "seed:ts": "ts-node -r tsconfig-paths/register src/db/seed.ts"
   },
   "author": "",
   "license": "ISC",
