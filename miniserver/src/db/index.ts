@@ -7,15 +7,15 @@ const makeConnection = async () => {
 };
 
 export const UserSchema = new Schema({
-  email: String,
-  password: String,
+  email: { type: String, required: true, unique: true },
+  hash: String, // not required at creation in real applications usually (verify email first)
   roles: { type: Schema.Types.ObjectId, ref: "Role" },
 });
 
 export type UserType = {
   email: string;
-  password: string;
-  roles: string[];
+  hash: string; // salt will be in hash
+  roles: Types.ObjectId[]; // string array really
 };
 
 export const RoleSchema = new Schema({

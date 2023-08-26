@@ -20,8 +20,8 @@ const makeConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, mongoose_1.connect)(process.env.MONGO_URL || "", {});
 });
 exports.UserSchema = new mongoose_1.Schema({
-    email: String,
-    password: String,
+    email: { type: String, required: true, unique: true },
+    hash: String,
     roles: { type: mongoose_1.Schema.Types.ObjectId, ref: "Role" },
 });
 exports.RoleSchema = new mongoose_1.Schema({
