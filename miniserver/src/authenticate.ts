@@ -18,7 +18,7 @@ export type LocalStrategyDoneCallback = (
   options?: IVerifyOptions
 ) => void;
 
-exports.local = passport.use(
+export const local = passport.use(
   new LocalStrategy(
     (email: string, password: string, done: LocalStrategyDoneCallback) => {
       UserModel.findOne({ where: { email: email } })
@@ -59,7 +59,7 @@ passport.deserializeUser(function (user: UserType, cb) {
   });
 });
 
-exports.getToken = (user: UserType) => {
+export const getToken = (user: UserType) => {
   return jwt.sign(user, TOKEN_SECRET_KEY, { expiresIn: 3600 });
 };
 
@@ -68,7 +68,7 @@ const opts = {
   secretOrKey: TOKEN_SECRET_KEY,
 };
 
-exports.jwtPassport = passport.use(
+export const jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     console.log("JWT payload:", jwt_payload);
     // @ts-ignore-next-line
@@ -84,4 +84,4 @@ exports.jwtPassport = passport.use(
   })
 );
 
-exports.verifyUser = passport.authenticate("jwt", { session: false });
+export const verifyUser = passport.authenticate("jwt", { session: false });
