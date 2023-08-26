@@ -56,6 +56,7 @@ passport.use(
   )
 );
 
+// We don't use these, we AUTHENTICATE! each route request!!!! These are for using cookie sessions
 // passport.serializeUser();
 // passport.deserializeUser();
 
